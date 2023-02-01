@@ -1,46 +1,44 @@
 
 const audioCtx = new ( window.AudioContext || window.webkitAudioContext )();
 
-const pitch = 200;
-const freq = 4;
-let oscLaunch = false;
+let pitch = 440;
+let freq = 4;
+let oscIsPlaying = 0;
 
-// OSC > PAN > OUT
-const oscL = audioCtx.createOscillator();
-const panL = audioCtx.createStereoPanner();
-oscL.frequency.value = pitch;
-oscL.connect( panL );
-panL.connect( audioCtx.destination );
-panL.pan.value = ( -1 );
+let leftOsc = ctx.createOscillator();
+let leftPan = ctx.createPanner();
+let leftVol = ctx.createGain();
+leftOsc.connect( leftPan );
+leftPan.connect( leftVol );
+leftVol.connect( ctx.destination );
+leftOsc.frequency.value = pitch;
+leftPan.pan.value = ( -1 );
 
-// OSC > PAN > OUT
-const oscR = audioCtx.createOscillator();
-const panR = audioCtx.createStereoPanner();
-oscR.frequency.value = pitch + freq;
-panR.connect( audioCtx.destination );
-oscR.connect( panR );
-panR.pan.value = 1;
+let rightOsc = ctx.createOscillator();
+let rightPan = ctx.createPanner();
+let rightVol = ctx.createGain();
+rightOsc.connect( rightPan );
+rightPan.connect( rightVol );
+rightVol.connect( ctx.destination );
+rightOsc.frequency.value = pitch + freq;
+rightPan.pan.value = 1;
 
-function startBB() {
-    if (oscLaunch) {
-        panL.connect( audioCtx.destination );
-        panR.connect( audioCtx.destination );
+function playOsc() {
+    if (oscIsPlaying) {
+        leftOsc.connect( leftPan );
+        rightOsc.connect( rightPan );
     } else {
-        oscLaunch = true;
-        oscL.start();
-        oscR.start();
+        oscIsPlaying = 1;
+
+        leftOsc.start();
+        rightOsc.start();
     }
-    
-    console.log( 'started' );
 }
 
-function stopBB() {
-    panL.disconnect( audioCtx.destination );
-    panR.disconnect( audioCtx.destination );
-
-    console.log( 'stopped' );
+function stopOsc() {
+    leftOsc.disconnect( leftPan );
+    rightOsc.disconnect( rightPan );
 }
-
 
 
 
