@@ -1,5 +1,5 @@
 
-const audioCtx = new ( window.AudioContext || window.webkitAudioContext )();
+const ctx = new ( window.AudioContext || window.webkitAudioContext )();
 
 let pitch = 440;
 let freq = 4;
